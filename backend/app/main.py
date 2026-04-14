@@ -9,8 +9,10 @@ from app.api.routes import tasks, auth
 from app.db.session import engine
 
 
-task.Base.metadata.create_all(bind=engine)
+
 user.Base.metadata.create_all(bind=engine)
+task.Base.metadata.create_all(bind=engine)
+
 app = FastAPI(title="Task Management API")
 
 # =========================
