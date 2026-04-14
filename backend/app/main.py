@@ -1,27 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# ★ modelsは必ず先に読み込む（SQLAlchemy対策）
-from app.models import user, task
-
-# ★ router読み込み
-from app.api.routes import tasks, auth
 from app.db.session import engine
+from app.db.base import Base   # ★これ推奨
 
+import app.models.user
+import app.models.task
 
-
-user.Base.metadata.create_all(bind=engine)
-task.Base.metadata.create_all(bind=engine)
+from app.api.routes import tasks, auth
 
 app = FastAPI(title="Task Management API")
 
-# =========================
-# CORS設定
-# =========================
+# ★テーブル作成（これが確実）
+Base.metadata.create_all(bind=engine)
+
 origins = [
-    "http://localhost:5173",   # Vite
-    "http://localhost:3000",   # React
-    "https://your-frontend.vercel.app"  # 本番フロント
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://your-frontend.vercel.app"
 ]
 
 app.add_middleware(
@@ -32,15 +28,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# =========================
-# Router登録（ここが重要）
-# =========================
 app.include_router(tasks.router, prefix="/tasks", tags=["Tasks"])
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 
-# =========================
-# Root確認用
-# =========================
 @app.get("/")
 def root():
     return {"message": "API running"}
