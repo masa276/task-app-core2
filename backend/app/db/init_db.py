@@ -1,11 +1,5 @@
-from app.db.base import Base
 from app.db.session import engine
+from app.models import task, user
 
-# ★これが重要（必ずモデルを読み込む）
-from app.models import user, task
-
-print("Creating tables...")
-
-Base.metadata.create_all(bind=engine)
-
-print("Done")
+task.Base.metadata.create_all(bind=engine)
+user.Base.metadata.create_all(bind=engine)
