@@ -9,8 +9,9 @@ class User(Base):
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
 
+    # Taskとのリレーション
     tasks = relationship(
-        "Task",
+        "Task",  # ← 文字列参照（重要）
         back_populates="user",
-        cascade="all, delete"
+        cascade="all, delete-orphan"
     )
