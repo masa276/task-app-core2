@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.db.base import Base
 from app.db.session import engine
-from app.db.base import Base   # ★これ推奨
 
+# ★モデルを必ず読み込む（超重要）
 import app.models.user
 import app.models.task
 
@@ -11,9 +12,14 @@ from app.api.routes import tasks, auth
 
 app = FastAPI(title="Task Management API")
 
-# ★テーブル作成（これが確実）
+# ======================
+# DBテーブル生成
+# ======================
 Base.metadata.create_all(bind=engine)
 
+# ======================
+# CORS
+# ======================
 origins = [
     "http://localhost:5173",
     "http://localhost:3000",
@@ -28,9 +34,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ======================
+# Router
+# ======================
 app.include_router(tasks.router, prefix="/tasks", tags=["Tasks"])
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 
+# ======================
+# Root
+# ======================
 @app.get("/")
 def root():
     return {"message": "API running"}
