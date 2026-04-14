@@ -6,7 +6,11 @@ from app.models import user, task
 
 # ★ router読み込み
 from app.api.routes import tasks, auth
+from app.db.session import engine
 
+
+task.Base.metadata.create_all(bind=engine)
+user.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="Task Management API")
 
 # =========================
