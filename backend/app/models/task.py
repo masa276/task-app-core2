@@ -1,13 +1,18 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
-from app.db.session import Base
+from app.db.base import Base
 
 class Task(Base):
     __tablename__ = "tasks"
 
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    description = Column(String)
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, index=True)
+    done = Column(Boolean, default=False)
+
     user_id = Column(Integer, ForeignKey("users.id"))
 
-    user = relationship("User", backref="tasks")
+    # Userとのリレーション
+    user = relationship(
+        "User",  # ← 文字列参照（重要）
+        back_populates="tasks"
+    )
